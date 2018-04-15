@@ -1,0 +1,9 @@
+.btn {
+    border: 1px solid black;
+}
+.btn-default {
+    background-color: #eee;
+}
+.btn-info {
+    background-color: #3f2;
+}

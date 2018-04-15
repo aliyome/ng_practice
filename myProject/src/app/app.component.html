@@ -18,3 +18,25 @@
   </li>
 </ul>
 
+<p>1 + 1 = {{ 1 + 1 }}</p>
+<p>{{a}} * {{b}} = {{ a * b }}</p>
+<p>{{c}} + {{d}} = {{ [c,d].join(' ') }}</p>
+<p>eが{{e}}であれば、{{c}} => {{ (e) ? c : d }}</p>
+<button (click)="clickButton($event)"
+        [disabled]="isDisabled">ボタン</button>
+<img [src]="imagePath" [attr.width]="200" />
+<p [class.bold]="isBold">bold</p>
+<p [style.font-size.%]="200">bold</p>
+<input type="text" [(ngModel)]="model">
+<p>{{model}}</p>
+<p appUnderline>underline</p>
+
+<app-child [person]="profile" (selected)="showAlert($event)"></app-child>
+
+<li *ngFor="let e of [1, 2, 3, 4, 5]; index as idx; even as isEven;">
+  {{idx}} - {{e}}
+  <span *ngIf="isEven; else isOdd;">even</span>
+  <ng-template #isOdd><span>odd</span></ng-template>
+</li>
+
+

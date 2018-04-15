@@ -1,18 +1,34 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+// import { RouterModule, Routes } from '@angular/router';
 
 
 import { AppComponent } from './app.component';
+import { SimpleComponent } from './simple/simple.component';
+import { UnderlineDirective } from './underline.directive';
+import { CalcService } from './calc.service';
+import { ChildComponent } from './child/child.component';
 
+
+// const router: Routes = [
+//   { path: '', component: AppComponent },
+//   { path: 'simple', component: SimpleComponent }
+// ];
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    SimpleComponent,
+    UnderlineDirective,
+    ChildComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    FormsModule,
+    // RouterModule.forRoot(router)
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [CalcService],
+  bootstrap: [AppComponent, SimpleComponent]
 })
 export class AppModule { }
