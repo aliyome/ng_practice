@@ -91,3 +91,16 @@
 * uppercase
 * date: 'yyyyMMdd'
 
+## モジュール
+
+* JIT `platformBrowserDynamic().bootstrapModule(AppModule)`
+* @NgModule()デコレータ
+    + imports 依存モジュール exportsされたコンポーネントなど、プロバイダなどが使用可能になる
+    + declarations 依存コンポーネントなど
+    + providers 依存サービスなど
+    + あとでしらべる
+        - exports: [] // モジュールで使用しているディレクティブなどが依存する別モジュールを指定する。
+        - entryComponents: [] // Lazy loadingと関係？
+* ComponentModule
+* BrowserModule ∋ ComponentModule
+* WorkerAppModule WebWorker用
