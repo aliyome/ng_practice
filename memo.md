@@ -270,3 +270,28 @@ const options = {params, headers};
 this.http.get<string>('hoge.json', options).subscribe(console.log);
 ```
 
+## パイプ
+
+ビルトインパイプ
+
+* number: '3.1-5' ⇒ 整数部が3桁以上、小数部は1桁から最大5桁
+* percent: '3.1-5'
+* currency: 'JPY': true: '3.1-5' ⇒ 通貨:通貨記号表示:number
+* date: 'yyyyMMdd HHmmss'
+* json ⇒ 文字列として表示
+* slice: 0: 3 ⇒ 0-3要素のみ表示
+* async ⇒ Observable, Promiseの結果を表示 (unsubscribeまでやってくれる)
+
+カスタムパイプ
+
+```ts
+// declarationsに追加すると使える
+@Pipe({ name: 'pipe-hoge' })
+export class HogePipe implements PipeTransform {
+    transform(value: any, arg1: any, arg2: any): any {
+        return 1;
+    }
+}
+```
+
+
