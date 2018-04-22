@@ -140,11 +140,32 @@ const externalAnimation = animation([animate(...)]);
 useAnimation(externalAnimation)
 ```
 
-## サービス
+## サービスとDI
 
 * `ng g service hoge`
 * コンポーネントでimport
 * モジュールのprovidersに追加
+* DIによって取得するインスタンスは**シングルトン**
+
+```ts
+{provide: HogeService, useClass: HogeService},  // 明示しない場合は暗黙的にコレに変換される
+{provide: HogeService, useValue: hogeServiceValue},  // exportされたインスタンスをDI（クラスをインスタンス化したもの）
+[HogeService, {provide: FooService, useExisting: HogeService}],  // FooServiceをHogeServiceの別名として使う
+{provide: HogeFactoryService, useFactory: hogeFactory, deps: [HogeService, FooService]},  // 関数をDIできる。その関数にもdepsをDIできる
+
+{provide: HogeConstToken, useValue: HOGE_CONST},  //  exportされたインスタンスをDI（雑なconstハッシュ）
+interface HogeConst { id: number, name: string }
+export const HOGE_CONST: HogeConst = { id: 1, name: 'hoge' };
+export const HogeConstToken = new InjectionToken<HogeConst>('hogeconsttoken')
+```
+
+```ts
+constructor(private hoge: HogeService) {}  // 暗黙的
+constructor(@Inject(HogeService) private hoge: HogeService) {}  // 明示
+
+constructor(@Optional() private hoge: HogeService) {}  // providerがない場合nullが代入される
+```
+
 
 ## コンポーネント間通信
 
