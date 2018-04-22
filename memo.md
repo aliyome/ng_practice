@@ -51,7 +51,14 @@
 * `src/app/app.module.ts` `@NgModule({declarations:[...Hoge.Component]})`
 * @Componentデコレータ(@Directiveを継承している)
 * ライフサイクル
-    + あとで追記する
+    + OnChanges - @Inputに渡された値をプロパティに設定する時に呼ばれる **OnInitの前**
+    + OnInit - コンポーネント生成、プロパティに値セット後
+    + DoCheck - OnChanges、OnInit直後
+    + AfterContentInit - コンポーネント内のコンテンツに値が反映された直後と、DoCheck後に一度だけ
+    + AfterContentChecked - コンテンツ変更の度。AfterContentInit後と、DoCheckの後に毎回
+    + AfterViewInit - コンポーネント内のビューに値が反映された後と、**AfterContentChecked**の後に一度だけ　※本当にあってる？
+    + AfterViewChecked - ビューの値が変更された後。AfterViewInitの後、AfterContentCheckdの後に毎回
+    + OnDestroy - コンポーネント破棄時に呼ばれる。イベントハンドリングの解除、ストリーム購読解除など、メモリリークを防ぐときはココが多い。
 
 ## ディレクティブ
 
