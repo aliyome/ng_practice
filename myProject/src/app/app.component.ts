@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { UnderlineDirective } from './underline.directive';
-import { CalcService } from './calc.service';
+import { CalcService, MockCalcService, MockCalcServiceForChild } from './calc.service';
 import { ChildComponent } from './child/child.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  providers: [{ provide: CalcService, useClass: MockCalcService }],
+  viewProviders: [{ provide: CalcService, useClass: MockCalcServiceForChild }],
 })
 export class AppComponent {
   title = 'app';
@@ -35,5 +37,10 @@ export class AppComponent {
 
   showAlert(person: any) {
     alert(person.name);
+  }
+
+  changeDetectionTest() {
+    this.profile.name = 'unko';  // OnPushになっているので子コンポーネントは再描画されない
+    // this.profile = {id: 9, name: 'unko'};  // OnPushになっていても子コンポーネントは再描画される
   }
 }

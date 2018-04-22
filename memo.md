@@ -49,11 +49,37 @@
 
 * `ng g component hoge`
 * `src/app/app.module.ts` `@NgModule({declarations:[...Hoge.Component]})`
+* @Componentデコレータ(@Directiveを継承している)
+* ライフサイクル
+    + あとで追記する
 
 ## ディレクティブ
 
 * `ng g directive hoge`
 * コンポーネントでimport
+
+## コンポーネント・ディレクティブのメタデータ
+
+```ts
+@Component({
+    selector: '.my-app[data-component]',  // マウント先, :notとか, [visible=false]とか指定できる CSSセレクタほど柔軟ではない
+    host: { '[class.red]': 'isRed' }, // 使わない。@HostBindig, @HostListenerを使う
+    inputs: ['prop'],  // 使わない。@Inputデコレータが推奨される
+    output: ['changeHoge'],  // 使わない。@Outputを使う
+    exportAs: 'hoge',  // 親コンポーネントで <app-child #c="hoge"> とできる
+    template: '<p>{{prop}}</p> <button (click)="changeHogeをEmitする関数()">ボタン</button>',
+    providers: [{provide: HogeService, useClass: MockHogeService}],  // コンストラクタでHogeService型の引数があればMockHogeServiceがDIされる
+    viewProviders: [{provide: HogeService, useClass: MockHogeChildService}],  // viewChild(ネストした子コンポーネントにはMockHogeChildServiceがDIされる)
+    changeDetection: ChangeDetectionStrategy.OnPush,  // Inputに変更があった時だけ変更検知
+    // viewChild, viewChildren, contentChild, contentChildrenは使わない、各デコレータを使う
+    animations: [trigger('myTrigger', [
+        state('on', style('opacity', 1)),
+        state('off', style('opacity', 0)),
+        transition('on => off', [ animate('.5s') ])
+    ]],
+    encapsulation: ViewEncapsulation.Emulated,  // ローカルスコープを属性セレクタか、ShadowDOMで実現するか
+})
+```
 
 ## サービス
 
@@ -98,9 +124,19 @@
     + imports 依存モジュール exportsされたコンポーネントなど、プロバイダなどが使用可能になる
     + declarations 依存コンポーネントなど
     + providers 依存サービスなど
+    + exports 他のModuleに対してComponentなどを公開する
     + あとでしらべる
-        - exports: [] // モジュールで使用しているディレクティブなどが依存する別モジュールを指定する。
         - entryComponents: [] // Lazy loadingと関係？
 * ComponentModule
 * BrowserModule ∋ ComponentModule
 * WorkerAppModule WebWorker用
+
+## Typescript
+
+* デコレータ
+    + メタデータを渡す
+
+## RxJx
+
+* Observerはnext, error, completeのみ
+* Observableはsubscribeのみ

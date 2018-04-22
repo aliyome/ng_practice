@@ -22,8 +22,8 @@
 <p>{{a}} * {{b}} = {{ a * b }}</p>
 <p>{{c}} + {{d}} = {{ [c,d].join(' ') }}</p>
 <p>eが{{e}}であれば、{{c}} => {{ (e) ? c : d }}</p>
-<button (click)="clickButton($event)"
-        [disabled]="isDisabled">ボタン</button>
+<button (click)="clickButton($event)">ボタン</button>
+<button [disabled]="isDisabled">非活性ボタン</button>
 <img [src]="imagePath" [attr.width]="200" />
 <p [class.bold]="isBold">bold</p>
 <p [style.font-size.%]="200">bold</p>
@@ -39,4 +39,5 @@
   <ng-template #isOdd><span>odd</span></ng-template>
 </li>
 
+<button (click)="changeDetectionTest()">changeDetectionTest</button>
 

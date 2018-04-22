@@ -5,10 +5,13 @@
 ID: {{person.id}}
 Name: {{person.name}}
 
+<input type="text" [(ngModel)]="person.name">
+<div style="width: 100px; height: 100px; background: red;" [@onOff]="onOff"></div>
+
 <button (click)="click(person)">Child Button</button>
 
-<button [ngClass]="'btn btn-default'">ngClass1</button>
-<button [ngClass]="['btn, btn-info']">ngClass2</button>
+<button [ngClass]="'btn btn-default'" (click)="click2()">ngClass1</button>
+<button [ngClass]="['btn, btn-info']" (click)="clickOnOff()">ngClass2</button>
 <button
   [ngClass]="{'btn btn-info': sample3, 'btn btn-default': !sample3}"
   (click)="sample3 = !sample3">ngClass3</button>

@@ -10,3 +10,25 @@ export class CalcService {
   }
 
 }
+
+@Injectable()
+export class MockCalcService {
+
+  constructor() { }
+
+  add(a: number, b: number): number {
+    return 100;
+  }
+
+}
+
+@Injectable()
+export class MockCalcServiceForChild {
+
+  constructor() { }
+
+  add(a: number, b: number): number {
+    return 9999;
+  }
+
+}
