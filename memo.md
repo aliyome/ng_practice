@@ -72,6 +72,7 @@
     viewProviders: [{provide: HogeService, useClass: MockHogeChildService}],  // viewChild(ネストした子コンポーネントにはMockHogeChildServiceがDIされる)
     changeDetection: ChangeDetectionStrategy.OnPush,  // Inputに変更があった時だけ変更検知
     // viewChild, viewChildren, contentChild, contentChildrenは使わない、各デコレータを使う
+    // parentComponentの初期化時にchildComponentは初期化されていないのでAfterViewInitフックを使う
     encapsulation: ViewEncapsulation.Emulated,  // ローカルスコープを属性セレクタか、ShadowDOMで実現するか
 })
 ```
