@@ -438,3 +438,37 @@ export class HogeResolverService implements Resolve<string> {
 }
 ```
 
+
+## Lazy loading / Preloading
+
+* サブモジュール単位で遅延読み込み可能
+* CanActivateによるガードはモジュールを読み込んでしまうので、モジュール読み込み前にチェックしたい場合はcanLoad
+* 全部順次読み込み`RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })`
+    + PreloadingStrategyは自作可能
+
+```ts
+const routes: Routes = [{
+    path: 'lazy',
+    loadChildren: './path/to/module#ModuleName',  // componentの代わりにコレ書くだけで遅延読み込み自体は可能
+    canLoad: [LazyGuard],
+}]
+
+@Injectable()
+export class LazyGuard implements CanLoad {
+    canLoad(route: Route): Observable<boolean> | Promise<boolean> | boolean {
+        return true;
+    }
+}
+
+// カスタムプリロード例
+@Injectable()
+export class AppPreloadingStrategy implements PreloadingStrategy {
+    preload(route: Route, load: () => Observable<any>): Observable<any> {
+        if (route.data && route.data['preload']) {
+            console.log('Preloaded: ' + route.path);
+        } else {
+            return Observable.of(null);
+        }
+    }
+}
+```
