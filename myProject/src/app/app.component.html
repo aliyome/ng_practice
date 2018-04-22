@@ -48,3 +48,8 @@
   <li *ngFor="let item of list">{{item}}</li>
 </ul>
 
+<form [formGroup]="group">
+  <input [formControl]="foo">
+  <input formControlName="hoge">
+  <button type="submit" (click)="onSubmit()">submit</button>
+</form>

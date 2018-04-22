@@ -294,4 +294,40 @@ export class HogePipe implements PipeTransform {
 }
 ```
 
+## フォーム
+
+* FormsModule : テンプレート駆動 定型的なものに
+* ReactiveFormsModule : コード駆動 インタラクティブにフォームが変化するものに
+    + 加えて、フォームのロジックが
+* 状態を表すCSSクラスが提供される
+    + ng-touched, ng-untouched
+    + ng-dirty, ng-pristine  // 変更済み・変更なし
+    + ng-valid, ng-invalid
+* バリデーション
+    + required
+    + maxlength, minlength
+    + pattern
+    + email
+
+```ts
+export class HogeComponent {
+    hoge = new FormControl();  // 1項目のみ
+    group: FormGroup;  // 複数項目
+    constructor(private fb: FormBuilder) {
+        this.group = this.fb.group({
+            name: ['default name', Validators.required],
+            age: ['', Validators.required]
+        });
+    }
+    // group.value には {name: 'default name', age: ''} が格納される。
+}
+```
+```html
+<input [formControl]="hoge">
+<form [formGroup]="group" novalidate>
+    <input formControlName="name">
+    <input formControlName="age">
+</form>
+```
+
 

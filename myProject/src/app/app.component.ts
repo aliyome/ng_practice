@@ -3,6 +3,7 @@ import { UnderlineDirective } from './underline.directive';
 import { CalcService, MockCalcService, MockCalcServiceForChild } from './calc.service';
 import { ChildComponent } from './child/child.component';
 import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -45,7 +46,18 @@ export class AppComponent {
 
   list = [];
 
-  constructor(private calcService: CalcService) { }
+  foo = new FormControl();
+  group: FormGroup;
+
+  constructor(private calcService: CalcService, private fb: FormBuilder) {
+    this.group = this.fb.group({
+      hoge: ['aa', Validators.required]
+    });
+  }
+
+  onSubmit() {
+    console.warn({a: this.foo, b: this.group.value});
+  }
 
   clickButton($event) {
     const val = this.calcService.add(1, 2);
