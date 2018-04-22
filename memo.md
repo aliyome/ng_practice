@@ -216,7 +216,34 @@ constructor(@Optional() private hoge: HogeService) {}  // providerがない場�
 * デコレータ
     + メタデータを渡す
 
-## RxJx
+## RxJS
 
 * Observerはnext, error, completeのみ
 * Observableはsubscribeのみ
+
+```ts
+// クリック回数をカウント
+const click$ = Rx.Observable.fromEvent(btnHoge, 'click');
+click$.throttleTime(1000).scan(count => count + 1, 0).subscribe(count => console.log(`${count} Clicked!`));
+
+// ObserverとObservable
+const observable = Rx.Observable.create(observer => {
+    observer.next('A'); observer.next('B');
+});
+observable.subscribe({
+    next: x => console.log(x),
+    error: x => console.error(x),
+    complete: () => console.log('complete')
+})
+
+// Subject は subscribe も next も出来る
+const subject = new Rx.Subject();
+subject.subscribe({next: console.log});
+subject.next('A');
+observable.subscribe(subject);  // 当然subscribeで他のobservableを購読できる
+
+// PromiseとRxJS
+const o = Rx.Observable.fromPromise(hogePromise);
+const p = Rx.Observable.of('a').roPromise();
+
+```
