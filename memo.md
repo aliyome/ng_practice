@@ -330,4 +330,111 @@ export class HogeComponent {
 </form>
 ```
 
+## ルーティング
+
+CLIでプロジェクトを作る際、`ng new proj --routing`で基本的なルーティングが作成される
+
+`ng g guard hoge` で基本的なガード（遷移時アクセス制御）が作れる
+
+* <router-outlet></router-outlet>  // ここにコンポーネントが描画される
+    + <router-outlet name="sub"></router-outlet>  // 復数のルーティング要素を配置可能
+* <a routerLink="/">home</a>  // コンポーネント切り替えのリンク (pushState)
+    + <a [routerLink]="['/', 'detail'">detail</a>  // 当然バインド出来る [routerLink]="/detail"と同じ
+    + <a [routerLink]="['/', 'detail', item.id">item</a>  // 詳細ページへのリンク作成に便利 /detail/1
+    + <a routerLink="/" routerLinkActive="active">home</a>  // 現在のURLと同じなら .active クラスが付与される
+    + <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">home</a>  // 完全一致のみ
+    + <a routerLink="/detail" [queryParams]="{hoge: 'foo'}">foo</a>  // クエリパラメータ ?hoge=foo を渡す
+    + <a routerLink="/detail" fragment="bar">#bar</a>  // フラグメント #bar を渡す
+
+
+```ts
+const routes: Routes = [
+    {
+        path: '',
+        pathMatch: 'full',  // 前方一致ではなく完全一致
+        canActivateChild: [HogeGuard],  // コンポーネント生成前チェック
+        canDeactivate: [HogeGuard],  // ルーティングから外れるタイミング（編集中なのに別ページに遷移とか）
+        children: [  // 多階層可能
+            { path: '', component: HogeComponent, data: {title: 'トップページ'}},  // dataはroute.dataで取得可能
+            { path: 'detail', component: DetailComponent, children: [
+                { path: ':id', component: ChildComponent }  // URLパラメータ
+            ]}
+        ]
+    },
+    {
+        path: 'sub',  // /subにアクセスしても何も表示されない。router-outlet name="sub" のみアクセス可能
+        component: SubComponent,
+        resolve: { hogeData: HogeResolverService },  // resolverサービスを作ることで動的にdataにデータを渡せる。
+        outlet: 'sub'
+    }
+    {
+        path: '**',
+        redirectTo: ''  // ルートページへ
+    }
+];
+
+@Component()
+export class ChildComponent {
+    constructor(private route: ActivatedRoute) {}
+    hoge() {
+        // URLパラメータ(:id)
+        this.route.params.subscribe(x => console.log(x['id']));
+        console.log(this.route.snapshot.params['id']);  // 同期版
+        // クエリパラメータ(?以降)
+        this.route.queryParams.subscribe(x => console.log(x));  // jsonライクオブジェクトで取得
+        // フラグメント(#以降)
+        this.route.fragment.subscribe(x => {
+            // Angularはブラウザのページ遷移を使わないため、アンカーリンクが効かない。
+            // アンカーリンクは自分で実装する
+            const target = document.getElementById(x);
+            if (target) target.scrollIntoView();
+        });
+        // URL変更
+        const extras: NavigationExtras = { queryParams: {a:0, b:'hoge'} };  // その他のオプション：fragmentとかいろいろ
+        // { skipLocationChange: true, replaceUrl: true }  // URLを変更しない、ブラウザに履歴を残さない　など。
+        // { queryParamsHandling: 'merge' }  // クエリパラメータを引き継ぐ
+        this.route.navigate(['/detail', 1], extras);  // 1は:id -> /detail/1
+    }
+}
+
+@Injectable()
+export class HogeGuard implements CanActivate,   // コンポーネント生成前
+                                  CanActivateChild,  // childrenのルーティングに対するCanActivate
+                                  CanDeactivate,   // ルーティングから外れてコンポーネントが吐きされるタイミング
+                                  CanLoad 
+                                  {
+    canActivate(
+        next: ActivatedRouteSnapshot,
+        state: RouterStateSnapshot
+    ): Observable<boolean> | Promise<boolean> | boolean {
+        if (認証成功) {
+            return true;
+        } else {
+            this.route.navigate(['/']);
+        }
+    }
+
+    canDeactivate(
+        component: HogeComponent,
+        currentRoute: ActivatedRouteSnapshot,
+        currentState: RouterStateSnapshot,
+        nextState: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean
+    {
+        return window.confirm('ページ遷移していい？');
+    }
+}
+
+// Resolverは ng g service HogeResolverServiceでサービスとして作る
+@Injectable()
+export class HogeResolverService implements Resolve<string> {
+    constructor(private router: Router) {}
+    canActivate(
+        next: ActivatedRouteSnapshot,
+        state: RouterStateSnapshot): Observable<any> | Promise<any> | any {
+        return new Promise(resolve => {
+            resolve('hoge');
+        });
+    }
+}
+```
 
