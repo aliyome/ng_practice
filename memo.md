@@ -247,3 +247,26 @@ const o = Rx.Observable.fromPromise(hogePromise);
 const p = Rx.Observable.of('a').roPromise();
 
 ```
+
+## JSONP
+
+```ts
+// HttpClientModule, HttpClientJsonModuleを事前にimports
+constructor(private http: HttpClient) {}
+hoge() {
+    this.http.jsonp('assets/data.jsonp', 'callback').subscribe(data => console.log(data));
+}
+```
+
+## Http
+
+```ts
+const headers = new HttpHeaders();
+const params = new HttpParams();
+params.append('foo', 'buz');
+headers.append('X-Api-Token', 'token');
+const options = {params, headers};
+// const options = { params: {...}, headers: {...} };  // HttpHeadersとか使わずにこれでもいい
+this.http.get<string>('hoge.json', options).subscribe(console.log);
+```
+
