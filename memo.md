@@ -72,13 +72,71 @@
     viewProviders: [{provide: HogeService, useClass: MockHogeChildService}],  // viewChild(ネストした子コンポーネントにはMockHogeChildServiceがDIされる)
     changeDetection: ChangeDetectionStrategy.OnPush,  // Inputに変更があった時だけ変更検知
     // viewChild, viewChildren, contentChild, contentChildrenは使わない、各デコレータを使う
-    animations: [trigger('myTrigger', [
-        state('on', style('opacity', 1)),
-        state('off', style('opacity', 0)),
-        transition('on => off', [ animate('.5s') ])
-    ]],
     encapsulation: ViewEncapsulation.Emulated,  // ローカルスコープを属性セレクタか、ShadowDOMで実現するか
 })
+```
+
+## その他デコレータ
+
+```ts
+@Input('counter') cnt: number;  // 別名を付けられる
+@Output('outCounter') cnt = new EventEmitter();
+
+@Input()
+set count(cnt: num) { ... }  // 単純なバインド以外も出来る
+get count() { ... }
+
+@HostBinding('class.red') isRed = false;  // isRedがtrueなら class.red を付与
+@HostListener('click', ['$event']) onClick(ev) { ... }  // コンポーネントのclickイベントにバインド
+```
+
+
+## アニメーション
+
+* 特殊なstate
+    + `void` コンポーネントにアニメーション要素が存在していない状態
+        - ngIfでfalseと評価されている状態
+    + `*` 存在しているが何も設定されていない状態
+* 特殊なtransition
+    + `:enter` void => *
+    + `:leave` * => void
+    + `:increment, :decrement` stateではなくトリガーにバインドされた数値の増減が条件になる
+
+```ts
+@Component([{
+    animations: [trigger('myTrigger', [
+        state('on', style({'opacity': 1})),
+        state('off', style({'opacity': 0})),
+        transition('on => off', [ animate('.5s 100ms ease-in') ]),  // 持続時間、開始遅延時間
+        style({height: 0}),  // トランジションの影響を受けず、一瞬でこのスタイルに変わる。**'*'というワイルドカードもある**
+    ]],
+}])
+
+animate('1s', style({opacity: 1}))  // stateを使わずにanimateだけでアニメーション可能
+animate('1s', keyframes([
+    style({}), style({}), style({})  // 全て等間隔。不均等にする場合は各styleにoffsetプロパティを0.0-1.0で記述
+]))
+sequence([
+    group([
+        animate(...), animate(....)  // 2つのアニメーションは同時再生
+    ]),
+    animate(...)  // 上記2つのアニメーション後再生
+])
+query(':self', [  // コンポーネント自身を対象
+    style(...),
+    animate(...)
+])
+query('.contents', [ ... ], {limit:1})  // 子要素の.contentsを対象(最初に見つかった1要素のみ)
+
+query(':enter',[
+    style(...),
+    stagger(100, animate('500ms', style(...)))  // 500ms「ずつ」ずれて再生
+])
+
+query('@anotherTrigger', [animateChild()])  // 別トリガーのアニメを再生
+
+const externalAnimation = animation([animate(...)]);
+useAnimation(externalAnimation)
 ```
 
 ## サービス

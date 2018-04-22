@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UnderlineDirective } from './underline.directive';
 import { CalcService, MockCalcService, MockCalcServiceForChild } from './calc.service';
 import { ChildComponent } from './child/child.component';
+import { trigger, transition, query, style, stagger, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +10,21 @@ import { ChildComponent } from './child/child.component';
   styleUrls: ['./app.component.css'],
   providers: [{ provide: CalcService, useClass: MockCalcService }],
   viewProviders: [{ provide: CalcService, useClass: MockCalcServiceForChild }],
+
+  animations: [
+    trigger('staggerAnim', [
+      transition('0 => *', [
+        query(':enter', [
+          style({
+            transform: 'translateX(-100%)',
+          }),
+          stagger(100, animate(500, style({
+            transform: 'translateX(0)',
+          })))
+        ])
+      ])
+    ]),
+  ]
 })
 export class AppComponent {
   title = 'app';
@@ -27,6 +43,8 @@ export class AppComponent {
     id: 9, name: 'Hoge foo'
   };
 
+  list = [];
+
   constructor(private calcService: CalcService) { }
 
   clickButton($event) {
@@ -42,5 +60,13 @@ export class AppComponent {
   changeDetectionTest() {
     this.profile.name = 'unko';  // OnPushになっているので子コンポーネントは再描画されない
     // this.profile = {id: 9, name: 'unko'};  // OnPushになっていても子コンポーネントは再描画される
+  }
+
+  showList() {
+    if (this.list.length) {
+      this.list = [];
+    } else {
+      this.list = [1, 2, 3, 4, 5];
+    }
   }
 }

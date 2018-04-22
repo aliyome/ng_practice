@@ -33,11 +33,18 @@
 
 <app-child [person]="profile" (selected)="showAlert($event)"></app-child>
 
-<li *ngFor="let e of [1, 2, 3, 4, 5]; index as idx; even as isEven;">
-  {{idx}} - {{e}}
-  <span *ngIf="isEven; else isOdd;">even</span>
-  <ng-template #isOdd><span>odd</span></ng-template>
-</li>
+<ul>
+  <li *ngFor="let e of [1, 2, 3, 4, 5]; index as idx; even as isEven;">
+    {{idx}} - {{e}}
+    <span *ngIf="isEven; else isOdd;">even</span>
+    <ng-template #isOdd><span>odd</span></ng-template>
+  </li>
+</ul>
 
 <button (click)="changeDetectionTest()">changeDetectionTest</button>
+
+<button (click)="showList()">showList</button>
+<ul [@staggerAnim]="list.length">
+  <li *ngFor="let item of list">{{item}}</li>
+</ul>
 
